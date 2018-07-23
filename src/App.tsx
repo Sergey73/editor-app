@@ -1,37 +1,19 @@
-import * as mapboxgl from 'mapbox-gl';
 import * as React from 'react';
-import './App.css';
+import './App.scss';
 
-
+import Map from './components/map/Map';
+import Menu from './components/menu/Menu';
 
 class App extends React.Component {
-  map: mapboxgl.Map;
-  mapbox = mapboxgl;
-  mapContainer: any;
-
-  constructor(props: any) {
-    super(props);
-  }
-
-  componentDidMount() {
-    this.mapbox.accessToken = 'pk.eyJ1Ijoic2VyZ2V5NzMiLCJhIjoiY2lyM3JhNXR1MDAydGh6bWM3ZzBjaGlrYyJ9.MxdICo0uhxAtmyWpA_CeVw';
-    this.map = new this.mapbox.Map({
-      container: this.mapContainer,
-      style: 'mapbox://styles/mapbox/streets-v9'
-    });
-  }
-
-
-  componentWillUnmount() {
-    this.map.remove();
-  }
-
   render() {
-    // this.mapContainer = <div id="map" className="App__map-container" />;
     return (
-      <div className="App">
-        {/* { this.mapContainer } */}
-        <div ref={el => this.mapContainer = el} className="App__map-container" />
+      <div className="editor">
+        <div className="map">
+          <Map />
+        </div>
+        <div className="menu">
+          <Menu />
+        </div>
       </div>
     );
   }
