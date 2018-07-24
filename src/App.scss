@@ -1,5 +1,4 @@
 .editor {
-  background-color: black;
   display: grid;
   height: 100vh;
   grid-template-columns: auto 250px;
@@ -7,11 +6,7 @@
     "map panel";
   .map {
     position: relative;
-    color: white;
-    grid-area: map;
   }
   .menu {
-    color: white;
-    grid-area: panel;
   }
 }

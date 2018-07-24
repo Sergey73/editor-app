@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { createStore } from 'redux';
+
 import './App.scss';
 
 import Map from './components/map/Map';

@@ -21,7 +21,14 @@ class Menu extends React.Component {
   render() {
     // const { text } = this.props;
     return (
-      <div className="menu">menu</div>
+      <div className="menu-component">
+        <div className="menu-component__input">
+          <input type="text" placeholder="Новая точка маршрута"/>
+        </div>
+        <div className="menu-component__row">
+          строка
+        </div>
+      </div>
     );
   }
 }
