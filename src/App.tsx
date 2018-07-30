@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { createStore } from 'redux';
-
 import './App.scss';
 
 import Map from './components/map/Map';
 import Menu from './components/menu/Menu';
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <div className="editor">
