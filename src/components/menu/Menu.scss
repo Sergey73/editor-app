@@ -1,7 +1,6 @@
 .menu-component {
   &__input {
     grid-area: inputItem;
-    // justify-self: end;
     input {
       width: 100%;
     }
@@ -9,17 +8,18 @@
 
   &__row {
     grid-area: row;
-    // justify-self: end;
+    align-self: start; // выравнивание по оси y
+    &__list {
+      
+    }
   }
 
   display: grid;
-  height: 100%;
   grid-template-columns: 40px 170px 40px;
-  grid-template-rows: 30px 30px;
+  grid-template-rows: 30px;
   grid-template-areas:
     ". inputItem ."
     ". row .";
   grid-row-gap: 0px;
-  // justify-items: center;
   align-items: center;
 }

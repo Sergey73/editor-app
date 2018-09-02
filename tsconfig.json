@@ -16,7 +16,10 @@
     "noImplicitAny": false,
     "strictNullChecks": true,
     "noUnusedLocals": false,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "paths": {
+      "@common/*": ["src/common/*"]
+    }
   },
   "exclude": [
     "node_modules",

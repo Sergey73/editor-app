@@ -7,11 +7,13 @@
     ]
   },
   "rules": {
+    "ordered-imports": false,
     "no-duplicate-variable": true,
     "no-unused-variable": [
       true
     ],
     "member-access": [true, "no-public"],
-    "no-debugger": false
+    "no-debugger": false,
+    "no-console": false
   }
 }
