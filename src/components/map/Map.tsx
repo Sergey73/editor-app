@@ -30,7 +30,7 @@ class MapComponent extends React.PureComponent {
   render() {
     this.markers = this.props.markers;
     debugger
-    this.addMarkers()
+    this.addMarkers();
 
     return (
       <div ref={ this.setMapContainer } className="map" />
