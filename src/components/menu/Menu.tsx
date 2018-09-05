@@ -57,7 +57,7 @@ class Menu extends React.Component {
   }
 
   private createListMarkers() {
-    return this.markers.map((marker, i) => <div key={i}> { marker.title }</div>);
+    return this.markers.map((marker, i) => <div key={i}> { marker.title } coords.lat: { marker.coords.lat} coords.lng: { marker.coords.lng} </div>);
   }
   
   private createMarker() {
