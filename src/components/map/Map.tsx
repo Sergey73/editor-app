@@ -3,10 +3,11 @@ import './Map.scss';
 import * as React from 'react';
 import IMarker from '@common/interfaces/Marker';
 
-class MapComponent extends React.PureComponent {
+class MapComponent extends React.Component {
   markers: IMarker[]; 
   props: any;
-  dispatch: any;
+  addMarker: (newDate:any) => {};
+
   private map: mapboxgl.Map;
   private mapbox = mapboxgl;
   private setMapContainer: React.Ref<HTMLDivElement>;
@@ -14,7 +15,7 @@ class MapComponent extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.dispatch = props.dispatch;
+    this.addMarker = this.props.addMarker;
     this.setMapContainer = (el:HTMLDivElement) => { this.mapContainer = el };
   }
   
@@ -27,6 +28,15 @@ class MapComponent extends React.PureComponent {
     this.addMarkers();
   }
   
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    debugger
+    if (this.props.markers.length === nextProps.markers.length) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   render() {
     this.markers = this.props.markers;
     debugger
@@ -43,10 +53,10 @@ class MapComponent extends React.PureComponent {
 
   private addMarkers() {
     if (!this.map) { return }
-    this.markers.forEach(marker => this.addMarker(marker));
+    this.markers.forEach(marker => this.createMarker(marker));
   }
 
-  private addMarker(marker: IMarker) {
+  private createMarker(marker: IMarker) {
     debugger
     const coords = this.map.getCenter();
     const item = document.createElement('div');
@@ -56,6 +66,13 @@ class MapComponent extends React.PureComponent {
     new mapboxgl.Marker()
       .setLngLat(coords)
       .addTo(this.map);
+
+    // тут обновляем  координаты
+    // if (marker.coords.lat === null && marker.coords.lng === null) {
+    // marker.coords = coords;
+    // this.addMarker(marker);
+
+    // }
   }
 }
 

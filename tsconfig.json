@@ -18,7 +18,8 @@
     "noUnusedLocals": false,
     "suppressImplicitAnyIndexErrors": true,
     "paths": {
-      "@common/*": ["src/common/*"]
+      "@common/*": ["src/common/*"],
+      "@store/*": ["src/store/*"]
     }
   },
   "exclude": [

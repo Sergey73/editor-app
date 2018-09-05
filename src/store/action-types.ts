@@ -1,0 +1,1 @@
+export const ACTION_ADD_MARKER = 'ACTION_ADD_MARKER';
