@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { 
   addMarker,
   updateMarker,
+  addMapCenter,
 } from '@store/actions';
 
 class App extends React.Component {
@@ -34,8 +35,9 @@ const putStateToProps = (state) => {
 
 const putActionToProps = (dispatch) => {
   return {
+    addMapCenter: bindActionCreators(addMapCenter, dispatch),
     addMarker: bindActionCreators(addMarker, dispatch),
-    updateMarker: bindActionCreators(updateMarker, dispatch)
+    updateMarker: bindActionCreators(updateMarker, dispatch),
   }
 }
 

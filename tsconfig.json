@@ -20,7 +20,8 @@
     "paths": {
       "@common/*": ["src/common/*"],
       "@store/*": ["src/store/*"]
-    }
+    },
+    "downlevelIteration": true
   },
   "exclude": [
     "node_modules",

@@ -3,9 +3,11 @@ import './Map.scss';
 import * as React from 'react';
 import IMarker from '@common/interfaces/Marker';
 
+
 class MapComponent extends React.Component {
-  markers: IMarker[]; 
+  markers: Map<string, IMarker>; 
   props: any;
+  addMapCenter: (newDate:any) => {};
   addMarker: (newDate:any) => {};
   updateMarker: (newDate:any) => {};
 
@@ -18,6 +20,7 @@ class MapComponent extends React.Component {
     super(props);
     this.addMarker = this.props.addMarker;
     this.updateMarker = this.props.updateMarker;
+    this.addMapCenter = this.props.addMapCenter;
     this.setMapContainer = (el:HTMLDivElement) => { this.mapContainer = el };
   }
   
@@ -26,22 +29,27 @@ class MapComponent extends React.Component {
     this.mapbox.accessToken = 'pk.eyJ1Ijoic2VyZ2V5NzMiLCJhIjoiY2lyM3JhNXR1MDAydGh6bWM3ZzBjaGlrYyJ9.MxdICo0uhxAtmyWpA_CeVw';
     this.map = new this.mapbox.Map({
       container: this.mapContainer,
-      style: 'mapbox://styles/mapbox/streets-v9'
+      style: 'mapbox://styles/mapbox/streets-v9',
     });
-    this.addMarkers();
+    this.subscribeToEvents();
+    this.addMapCenterCoords();
+    // this.addMarkers();
   }
   
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     debugger
-    let result = true;
-    nextProps.markers.forEach((marker) => {
-      if (marker.coords.lat === null) {
-        marker.coords = this.map.getCenter();
-        this.updateMarker(marker)
-        result = false;
-      }
-    });
-    return result;
+    // тут проверять поменялись ли координаты маркера или нет
+    // debugger
+    // let result = true;
+    // nextProps.markers.forEach((marker) => {
+    //   if (marker.coords.lat === null) {
+    //     marker.coords = this.map.getCenter();
+    //     this.updateMarker(marker)
+    //     result = false;
+    //   }
+    // });
+    // return result;
+    return true;
   }
 
   render() {
@@ -58,7 +66,17 @@ class MapComponent extends React.Component {
     this.map.remove();
   }
 
+  private subscribeToEvents() {
+    this.map.on('moveend', () => { this.addMapCenterCoords(); });
+  }
+
+  private addMapCenterCoords() {
+    const centerCoords = this.map.getCenter().wrap();
+    this.addMapCenter(centerCoords);
+  };
+
   private addMarkers() {
+    debugger
     if (!this.map) { return }
     this.markers.forEach(marker => this.createMarker(marker));
   }
@@ -67,7 +85,6 @@ class MapComponent extends React.Component {
     const item = document.createElement('div');
     item.classList.add('truck');
 
-    // Create a new marker
     new mapboxgl.Marker()
       .setLngLat([marker.coords.lng, marker.coords.lat])
       .addTo(this.map);
