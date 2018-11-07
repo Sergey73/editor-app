@@ -6,16 +6,26 @@ class Menu extends React.Component {
   markers: Map<string, IMarker>;
   props: any;
   addMarker: (newDate:any) => {};
-
+  deleteMarker: (newDate:number) => {};
+  
   constructor(props) {
     super(props);
     this.addMarker = this.props.addMarker;
+    this.deleteMarker = this.props.deleteMarker;
   }
   
   handleEnter: React.KeyboardEventHandler<HTMLInputElement> = e => {
     if (e.which === 13) {
       this.addMarkerToState(e);
     }
+  }
+  
+  removeMarker: React.MouseEventHandler<HTMLSpanElement> = (e: any) => {
+    debugger
+
+    const id: number = Number(e.target.dataset.id);
+    if (!id) { return; }
+    this.deleteMarker(id);
   }
 
   // проверка на обновление
@@ -58,7 +68,10 @@ class Menu extends React.Component {
 
   private createListMarkers() {
     const arrMarkers = [...this.markers.values()];
-    return arrMarkers.map((marker, i) => <div key={i}> { marker.title } coords.lat: { marker.coords.lat} coords.lng: { marker.coords.lng} </div>);
+    return arrMarkers.map((marker, i) => <div key={i}>
+      { marker.title } coords.lat: { marker.coords.lat} coords.lng: { marker.coords.lng}
+      <span data-id={ marker.id } onClick={ this.removeMarker }>x</span>  
+    </div>);
   }
   
   private createMarker() {

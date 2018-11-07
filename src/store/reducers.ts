@@ -29,8 +29,10 @@ const updateMarker = (markers, newMarker) => {
 	})
 }
 
-const deleteMarker = (markers: Map<string, IMarker>, id: string) => {
-	markers.delete(id);
+const deleteMarker = (markers: Map<number, IMarker>, id: number) => {
+	debugger
+	// удалить с карты
+	markers.delete(Number(id));
 	return markers.entries();
 }
 
@@ -41,7 +43,7 @@ export const rootReducer = (state: IState = initialState, action) => {
     case ACTION_UPDATE_MARKER:
 			return { ...state, markers: [  ...updateMarker(state.markers, action.payload)] }
     case ACTION_DELETE_MARKER:
-			return { ...state, markers: new Map(deleteMarker(state.markers, action.payload.id)) }
+			return { ...state, markers: new Map(deleteMarker(state.markers, action.payload)) }
 		case ACTION_ADD_MAP_CENTER: 
 			return { ...state, map: { ...state.map, center: action.payload }}
   }  

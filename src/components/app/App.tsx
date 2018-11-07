@@ -9,6 +9,7 @@ import {
   addMarker,
   updateMarker,
   addMapCenter,
+  deleteMarker,
 } from '@store/actions';
 
 class App extends React.Component {
@@ -37,6 +38,7 @@ const putActionToProps = (dispatch) => {
   return {
     addMapCenter: bindActionCreators(addMapCenter, dispatch),
     addMarker: bindActionCreators(addMarker, dispatch),
+    deleteMarker: bindActionCreators(deleteMarker, dispatch),
     updateMarker: bindActionCreators(updateMarker, dispatch),
   }
 }

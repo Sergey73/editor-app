@@ -33,11 +33,11 @@ class MapComponent extends React.Component {
     });
     this.subscribeToEvents();
     this.addMapCenterCoords();
+    debugger
     // this.addMarkers();
   }
   
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    debugger
     // тут проверять поменялись ли координаты маркера или нет
     // debugger
     // let result = true;
@@ -54,7 +54,6 @@ class MapComponent extends React.Component {
 
   render() {
     this.markers = this.props.markers;
-    debugger
     this.addMarkers();
 
     return (
@@ -62,6 +61,10 @@ class MapComponent extends React.Component {
     );
   }
   
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    debugger
+  }
+
   componentWillUnmount() {
     this.map.remove();
   }
@@ -76,8 +79,8 @@ class MapComponent extends React.Component {
   };
 
   private addMarkers() {
-    debugger
     if (!this.map) { return }
+    debugger
     this.markers.forEach(marker => this.createMarker(marker));
   }
 
