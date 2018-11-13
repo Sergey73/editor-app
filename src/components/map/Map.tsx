@@ -85,7 +85,7 @@ class MapComponent extends React.Component {
         const itemMarker = this.createMarker(marker);
         itemMarker
           .setLngLat([marker.coords.lng, marker.coords.lat])
-          .addTo(this.map);S
+          .addTo(this.map);
         this.markersOnMap.set(marker.id, itemMarker);
         };
     });
@@ -94,7 +94,9 @@ class MapComponent extends React.Component {
   private createMarker(marker: IMarker): mapboxgl.Marker {    
     const item = document.createElement('div');
     item.classList.add('truck');
-    return new mapboxgl.Marker();
+    return new this.mapbox.Marker({
+      draggable: true
+    });
   }
 
   private removeMarkerFromMap() {
