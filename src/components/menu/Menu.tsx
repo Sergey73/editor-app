@@ -3,7 +3,7 @@ import './Menu.scss';
 import IMarker from '@common/interfaces/Marker';
 
 class Menu extends React.Component {
-  markers: Map<string, IMarker>;
+  markers: IMarker[];
   props: any;
   addMarker: (newDate:any) => {};
   deleteMarker: (newDate:number) => {};
@@ -67,8 +67,7 @@ class Menu extends React.Component {
   }
 
   private createListMarkers() {
-    const arrMarkers = [...this.markers.values()];
-    return arrMarkers.map((marker, i) => <div key={i}>
+    return this.markers.map((marker, i) => <div key={i}>
       { marker.title } coords.lat: { marker.coords.lat} coords.lng: { marker.coords.lng}
       <span data-id={ marker.id } onClick={ this.removeMarker }>x</span>  
     </div>);

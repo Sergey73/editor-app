@@ -12,13 +12,13 @@ const initialState: IState = {
 	map: {
 		center: { lat: 0, lng: 0}
 	},
-	markers: new Map(),
+	markers: [],
 }
 
-const addMarker = (state, marker) => {
-	state.markers.set( marker.id, { ...marker, coords: state.map.center })
-	return state.markers.entries();
-}
+// const addMarker = (state, marker) => {
+// 	state.markers.set( marker.id, { ...marker, coords: state.map.center })
+// 	return state.markers.entries();
+// }
 
 const updateMarker = (markers, newMarker) => {
 	return markers.map((marker) => {
@@ -29,21 +29,20 @@ const updateMarker = (markers, newMarker) => {
 	})
 }
 
-const deleteMarker = (markers: Map<number, IMarker>, id: number) => {
+const deleteMarker = (markers: IMarker[], id: string) => {
 	debugger
 	// удалить с карты
-	markers.delete(Number(id));
-	return markers.entries();
+	return markers.filter(marker => marker.id === id ? false : true);
 }
 
 export const rootReducer = (state: IState = initialState, action) => {
   switch (action.type) {
     case ACTION_ADD_MARKER:
-			return { ...state, markers: new Map(addMarker(state, action.payload))  }
+			return { ...state, markers: [ ...state.markers, { ...action.payload, coords: state.map.center } ]  }
     case ACTION_UPDATE_MARKER:
 			return { ...state, markers: [  ...updateMarker(state.markers, action.payload)] }
     case ACTION_DELETE_MARKER:
-			return { ...state, markers: new Map(deleteMarker(state.markers, action.payload)) }
+			return { ...state, markers: deleteMarker(state.markers, action.payload) }
 		case ACTION_ADD_MAP_CENTER: 
 			return { ...state, map: { ...state.map, center: action.payload }}
   }  

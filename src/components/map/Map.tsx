@@ -5,7 +5,7 @@ import IMarker from '@common/interfaces/Marker';
 
 
 class MapComponent extends React.Component {
-  markers: Map<string, IMarker>; 
+  markers: IMarker[]; 
   props: any;
   addMapCenter: (newDate:any) => {};
   addMarker: (newDate:any) => {};
