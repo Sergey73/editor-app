@@ -82,21 +82,19 @@ class MapComponent extends React.Component {
     if (!this.map) { return }
     this.markers.forEach((marker) => {
       if (!this.markersOnMap.has(marker.id) ) {
-         this.createMarker(marker)
+        const itemMarker = this.createMarker(marker);
+        itemMarker
+          .setLngLat([marker.coords.lng, marker.coords.lat])
+          .addTo(this.map);S
+        this.markersOnMap.set(marker.id, itemMarker);
         };
     });
   }
 
-  private createMarker(marker: IMarker) {    
+  private createMarker(marker: IMarker): mapboxgl.Marker {    
     const item = document.createElement('div');
     item.classList.add('truck');
-
-    const itemMarker = new mapboxgl.Marker();
-    itemMarker
-      .setLngLat([marker.coords.lng, marker.coords.lat])
-      .addTo(this.map);
-
-    this.markersOnMap.set(marker.id, itemMarker);
+    return new mapboxgl.Marker();
   }
 
   private removeMarkerFromMap() {
