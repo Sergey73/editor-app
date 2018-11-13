@@ -21,8 +21,6 @@ class Menu extends React.Component {
   }
   
   removeMarker: React.MouseEventHandler<HTMLSpanElement> = (e: any) => {
-    debugger
-
     const id: number = Number(e.target.dataset.id);
     if (!id) { return; }
     this.deleteMarker(id);
@@ -64,13 +62,14 @@ class Menu extends React.Component {
     const newMarker = this.createMarker();
     newMarker.title = value;
     this.addMarker(newMarker);
+    e.target.value = '';
   }
 
   private createListMarkers() {
     const arrMarkers = [...this.markers.values()];
     return arrMarkers.map((marker, i) => <div key={i}>
       { marker.title } coords.lat: { marker.coords.lat} coords.lng: { marker.coords.lng}
-      <span data-id={ marker.id } onClick={ this.removeMarker }>x</span>  
+      <span className="close-btn" data-id={ marker.id } onClick={ this.removeMarker }>x</span>  
     </div>);
   }
   

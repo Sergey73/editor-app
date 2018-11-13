@@ -12,6 +12,7 @@ class MapComponent extends React.Component {
   updateMarker: (newDate:any) => {};
 
   private map: mapboxgl.Map;
+  private markersOnMap: Map<string, mapboxgl.Marker> = new Map();
   private mapbox = mapboxgl;
   private setMapContainer: React.Ref<HTMLDivElement>;
   private mapContainer: HTMLDivElement;
@@ -25,7 +26,6 @@ class MapComponent extends React.Component {
   }
   
   componentDidMount() {
-    debugger
     this.mapbox.accessToken = 'pk.eyJ1Ijoic2VyZ2V5NzMiLCJhIjoiY2lyM3JhNXR1MDAydGh6bWM3ZzBjaGlrYyJ9.MxdICo0uhxAtmyWpA_CeVw';
     this.map = new this.mapbox.Map({
       container: this.mapContainer,
@@ -33,8 +33,6 @@ class MapComponent extends React.Component {
     });
     this.subscribeToEvents();
     this.addMapCenterCoords();
-    debugger
-    // this.addMarkers();
   }
   
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -54,15 +52,17 @@ class MapComponent extends React.Component {
 
   render() {
     this.markers = this.props.markers;
-    this.addMarkers();
+    const nextMapLength = this.markers.size;
+    const prevMapLength = this.markersOnMap.size;
+    if ( nextMapLength > prevMapLength ) {
+      this.addMarkersOnMap();
+    } else if ( nextMapLength < prevMapLength ) {
+      this.removeMarkerFromMap();
+    }
 
     return (
       <div ref={ this.setMapContainer } className="map" />
     );
-  }
-  
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    debugger
   }
 
   componentWillUnmount() {
@@ -78,19 +78,37 @@ class MapComponent extends React.Component {
     this.addMapCenter(centerCoords);
   };
 
-  private addMarkers() {
+  private addMarkersOnMap() {
     if (!this.map) { return }
-    debugger
-    this.markers.forEach(marker => this.createMarker(marker));
+    this.markers.forEach((marker) => {
+      if (!this.markersOnMap.has(marker.id) ) {
+         this.createMarker(marker)
+        };
+    });
   }
 
   private createMarker(marker: IMarker) {    
     const item = document.createElement('div');
     item.classList.add('truck');
 
-    new mapboxgl.Marker()
+    const itemMarker = new mapboxgl.Marker();
+    itemMarker
       .setLngLat([marker.coords.lng, marker.coords.lat])
       .addTo(this.map);
+
+    this.markersOnMap.set(marker.id, itemMarker);
+  }
+
+  private removeMarkerFromMap() {
+    [ ...this.markersOnMap.keys()].forEach(id => {
+      if (!this.markers.has(id) ) {
+        const marker = this.markersOnMap.get(id);
+        if (marker) {
+          marker.remove();
+          this.markersOnMap.delete(id);
+        }
+      }
+    })
   }
 }
 

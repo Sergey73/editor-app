@@ -30,8 +30,6 @@ const updateMarker = (markers, newMarker) => {
 }
 
 const deleteMarker = (markers: Map<number, IMarker>, id: number) => {
-	debugger
-	// удалить с карты
 	markers.delete(Number(id));
 	return markers.entries();
 }

@@ -1,3 +1,5 @@
+import ICoords from '@common/interfaces/Coords';
+import IMarker from '@common/interfaces/Marker';
 import { 
 	ACTION_ADD_MARKER,
 	ACTION_UPDATE_MARKER,
@@ -5,30 +7,30 @@ import {
 	ACTION_DELETE_MARKER,
 } from "@store/action-types";
 
-export const addMarker = (data) => {
+export const addMarker = (marker: IMarker) => {
 	return {
-		payload: data,
+		payload: marker,
     type: ACTION_ADD_MARKER,
   }
 }
 
-export const updateMarker = (data) => {
+export const updateMarker = (marker: IMarker) => {
 	return {
-		payload: data,
+		payload: marker,
     type: ACTION_UPDATE_MARKER,
   }
 }
 
-export const deleteMarker = (data) => {
+export const deleteMarker = (id: string) => {
 	return {
-		payload: data,
+		payload: id,
     type: ACTION_DELETE_MARKER,
   }
 }
 
-export const addMapCenter = (data) => {
+export const addMapCenter = (coords: ICoords) => {
 	return {
-		payload: data,
+		payload: coords,
 		type: ACTION_ADD_MAP_CENTER,
 	}
 }

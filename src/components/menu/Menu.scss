@@ -22,4 +22,8 @@
     ". row .";
   grid-row-gap: 0px;
   align-items: center;
+
+  .close-btn {
+    cursor: pointer;
+  }
 }
