@@ -12,6 +12,9 @@ class MapComponent extends React.Component {
   updateMarker: (newDate:any) => {};
 
   private map: mapboxgl.Map;
+  private pathName: string = 'path';
+  private pathCoords: any[] = [];
+  // private pathCoords: mapboxgl.LngLatLike[] | any[] = [];
   private markersOnMap: Map<string, mapboxgl.Marker> = new Map();
   private mapbox = mapboxgl;
   private setMapContainer: React.Ref<HTMLDivElement>;
@@ -41,8 +44,8 @@ class MapComponent extends React.Component {
     // let result = true;
     // nextProps.markers.forEach((marker) => {
     //   if (marker.coords.lat === null) {
-    //     marker.coords = this.map.getCenter();
-    //     this.updateMarker(marker)
+      //     marker.coords = this.map.getCenter();
+      //     this.updateMarker(marker)
     //     result = false;
     //   }
     // });
@@ -59,16 +62,16 @@ class MapComponent extends React.Component {
     } else if ( nextMapLength < prevMapLength ) {
       this.removeMarkerFromMap();
     }
-
+    
     return (
       <div ref={ this.setMapContainer } className="map" />
-    );
-  }
+      );
+    }
 
-  componentWillUnmount() {
-    this.map.remove();
+    componentWillUnmount() {
+      this.map.remove();
   }
-
+  
   private subscribeToEvents() {
     this.map.on('moveend', () => { this.addMapCenterCoords(); });
   }
@@ -77,38 +80,89 @@ class MapComponent extends React.Component {
     const centerCoords = this.map.getCenter().wrap();
     this.addMapCenter(centerCoords);
   };
-
+    
   private addMarkersOnMap() {
     if (!this.map) { return }
+    this.pathCoords = [];
     this.markers.forEach((marker) => {
+      const markerCoords: mapboxgl.LngLatLike = [marker.coords.lng, marker.coords.lat];
       if (!this.markersOnMap.has(marker.id) ) {
-        const itemMarker = this.createMarker(marker);
+        const itemMarker = this.createMarker();
         itemMarker
-          .setLngLat([marker.coords.lng, marker.coords.lat])
+          .setLngLat(markerCoords)
           .addTo(this.map);
         this.markersOnMap.set(marker.id, itemMarker);
-        };
+      };
+      this.pathCoords.push(markerCoords);
     });
+    this.createPath();
   }
 
-  private createMarker(marker: IMarker): mapboxgl.Marker {    
-    const item = document.createElement('div');
-    item.classList.add('truck');
+  private createMarker(): mapboxgl.Marker {    
+    // const item = document.createElement('div');
+    // item.classList.add('truck');
     return new this.mapbox.Marker({
       draggable: true
     });
   }
 
   private removeMarkerFromMap() {
+    this.pathCoords = [];
     [ ...this.markersOnMap.keys()].forEach(id => {
+      const markerFromStor = this.markers.get(id);
       if (!this.markers.has(id) ) {
-        const marker = this.markersOnMap.get(id);
-        if (marker) {
-          marker.remove();
+        const markerOnMap = this.markersOnMap.get(id);
+        if (markerOnMap) {
+          markerOnMap.remove();
           this.markersOnMap.delete(id);
         }
+      } else {
+        if (markerFromStor) {
+          const markerCoords: mapboxgl.LngLatLike = [markerFromStor.coords.lng, markerFromStor.coords.lat];
+          this.pathCoords.push(markerCoords);
+        }
       }
-    })
+    });
+    this.createPath();
+  }
+
+  private createPath() {
+    const mapLayer = this.map.getLayer(this.pathName);
+    if(typeof mapLayer !== 'undefined') {
+      this.map.removeLayer(this.pathName).removeSource(this.pathName);
+    }
+    this.createSource();
+    this.addPathLayer();
+  }
+
+  private createSource() {
+    this.map.addSource(this.pathName, {
+      "type": "geojson",
+      "data": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "LineString",
+          "coordinates": this.pathCoords,
+        }
+      }
+    });
+  }
+
+  private addPathLayer() {
+    this.map.addLayer({
+      "id": this.pathName,
+      "type": "line",
+      "source": this.pathName,
+      "layout": {
+        "line-join": "round",
+        "line-cap": "round"
+      },
+      "paint": {
+        "line-color": "#888",
+        "line-width": 4
+      }
+    });  
   }
 }
 
