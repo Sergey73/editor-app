@@ -89,8 +89,9 @@ class MapComponent extends React.Component {
       if (!this.markersOnMap.has(marker.id) ) {
         const itemMarker = this.createMarker();
         itemMarker
-          .setLngLat(markerCoords)
-          .addTo(this.map);
+        .setLngLat(markerCoords)
+        .addTo(this.map)
+        .on('drag', () => this.onDragEnd());
         this.markersOnMap.set(marker.id, itemMarker);
       };
       this.pathCoords.push(markerCoords);
@@ -164,6 +165,20 @@ class MapComponent extends React.Component {
       }
     });  
   }
+  
+  // поменть в create and remove marker
+  // ставить координаты в stor
+  private onDragEnd() {
+    this.pathCoords = [];
+    this.markersOnMap.forEach((marker) => {
+      console.dir(marker);
+      const lngLat = marker.getLngLat();
+      const markerCoords: mapboxgl.LngLatLike = [lngLat.lng, lngLat.lat];
+      this.pathCoords.push(markerCoords);
+    });
+    this.createPath();
+  }
+
 }
 
 export default MapComponent;
