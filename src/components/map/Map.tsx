@@ -14,6 +14,16 @@ class MapComponent extends React.Component {
   private map: mapboxgl.Map;
   private pathName: string = 'path';
   private pathCoords: any[] = [];
+  // private geoJsonPathData: GeoJSON.Feature<GeoJSON.Geometry> = {
+  //   "type": "Feature",
+  //   "properties": {},
+  //   "geometry": {
+  //     "type": "LineString",
+  //     "coordinates": this.pathCoords,
+  //   }
+  // };
+
+
   // private pathCoords: mapboxgl.LngLatLike[] | any[] = [];
   private markersOnMap: Map<string, mapboxgl.Marker> = new Map();
   private mapbox = mapboxgl;
@@ -43,16 +53,16 @@ class MapComponent extends React.Component {
     // debugger
     // let result = true;
     // nextProps.markers.forEach((marker) => {
-    //   if (marker.coords.lat === null) {
-      //     marker.coords = this.map.getCenter();
-      //     this.updateMarker(marker)
-    //     result = false;
-    //   }
-    // });
-    // return result;
-    return true;
-  }
-
+      //   if (marker.coords.lat === null) {
+        //     marker.coords = this.map.getCenter();
+        //     this.updateMarker(marker)
+        //     result = false;
+        //   }
+        // });
+        // return result;
+        return true;
+      }
+      
   render() {
     this.markers = this.props.markers;
     const nextMapLength = this.markers.size;
@@ -67,31 +77,35 @@ class MapComponent extends React.Component {
       <div ref={ this.setMapContainer } className="map" />
       );
     }
-
+    
     componentWillUnmount() {
       this.map.remove();
-  }
-  
-  private subscribeToEvents() {
-    this.map.on('moveend', () => { this.addMapCenterCoords(); });
-  }
-
-  private addMapCenterCoords() {
-    const centerCoords = this.map.getCenter().wrap();
-    this.addMapCenter(centerCoords);
-  };
+    }
     
-  private addMarkersOnMap() {
-    if (!this.map) { return }
-    this.pathCoords = [];
-    this.markers.forEach((marker) => {
+    private subscribeToEvents() {
+      this.map.on('moveend', () => { this.addMapCenterCoords(); });
+      this.map.on('load', () => {
+        this.createSource();
+        this.addPathLayer();
+      });
+    }
+    
+    private addMapCenterCoords() {
+      const centerCoords = this.map.getCenter().wrap();
+      this.addMapCenter(centerCoords);
+    };
+    
+    private addMarkersOnMap() {
+      if (!this.map) { return }
+      this.pathCoords = [];
+      this.markers.forEach((marker) => {
       const markerCoords: mapboxgl.LngLatLike = [marker.coords.lng, marker.coords.lat];
       if (!this.markersOnMap.has(marker.id) ) {
         const itemMarker = this.createMarker();
         itemMarker
         .setLngLat(markerCoords)
         .addTo(this.map)
-        .on('drag', () => this.onDragEnd());
+        .on('drag', () => this.onDrag());
         this.markersOnMap.set(marker.id, itemMarker);
       };
       this.pathCoords.push(markerCoords);
@@ -128,18 +142,22 @@ class MapComponent extends React.Component {
   }
 
   private createPath() {
-    const mapLayer = this.map.getLayer(this.pathName);
-    if(typeof mapLayer !== 'undefined') {
-      this.map.removeLayer(this.pathName).removeSource(this.pathName);
-    }
-    this.createSource();
-    this.addPathLayer();
+    const source: mapboxgl.GeoJSONSource = (this.map.getSource(this.pathName) as mapboxgl.GeoJSONSource);
+    const geoJsonPathData: GeoJSON.Feature<GeoJSON.Geometry> = {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": this.pathCoords,
+      }
+    };
+    source.setData(geoJsonPathData);
   }
 
   private createSource() {
     this.map.addSource(this.pathName, {
-      "type": "geojson",
-      "data": {
+      type: 'geojson',
+      data: {
         "type": "Feature",
         "properties": {},
         "geometry": {
@@ -168,16 +186,26 @@ class MapComponent extends React.Component {
   
   // поменть в create and remove marker
   // ставить координаты в stor
-  private onDragEnd() {
+  private onDrag() {
     this.pathCoords = [];
     this.markersOnMap.forEach((marker) => {
       console.dir(marker);
+      // const roundValue = 5;
       const lngLat = marker.getLngLat();
-      const markerCoords: mapboxgl.LngLatLike = [lngLat.lng, lngLat.lat];
+      // const markerCoords: mapboxgl.LngLatLike = [this.roundNumber(lngLat.lng, roundValue), this.roundNumber(lngLat.lat, roundValue)];
+      const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
       this.pathCoords.push(markerCoords);
     });
     this.createPath();
   }
+
+  // private roundNumber(value: number, count: number):number {
+  //   const arr = value.toString().split('.');
+  //   if (arr.length === 1) {
+  //     return value;
+  //   }
+  //   return Number([arr[0], arr[1].slice(0, count) ].join('.'));
+  // }
 
 }
 
