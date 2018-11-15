@@ -3,7 +3,6 @@ import './Map.scss';
 import * as React from 'react';
 import IMarker from '@common/interfaces/Marker';
 
-
 class MapComponent extends React.Component {
   markers: Map<string, IMarker>; 
   props: any;
@@ -71,8 +70,14 @@ class MapComponent extends React.Component {
       this.addMarkersOnMap();
     } else if ( nextMapLength < prevMapLength ) {
       this.removeMarkerFromMap();
+    } else if (nextMapLength === prevMapLength) {
+      this.updateMarkers();
     }
     
+    if( nextMapLength || prevMapLength) {
+      this.createPath();
+    }
+
     return (
       <div ref={ this.setMapContainer } className="map" />
       );
@@ -100,17 +105,19 @@ class MapComponent extends React.Component {
       this.pathCoords = [];
       this.markers.forEach((marker) => {
       const markerCoords: mapboxgl.LngLatLike = [marker.coords.lng, marker.coords.lat];
+      ;
       if (!this.markersOnMap.has(marker.id) ) {
         const itemMarker = this.createMarker();
         itemMarker
         .setLngLat(markerCoords)
         .addTo(this.map)
-        .on('drag', () => this.onDrag());
+        .on('dragend', () => this.onDragEnd())
+        .on('drag', () => this.onDrag(marker));
         this.markersOnMap.set(marker.id, itemMarker);
       };
       this.pathCoords.push(markerCoords);
     });
-    this.createPath();
+    // this.createPath();
   }
 
   private createMarker(): mapboxgl.Marker {    
@@ -138,7 +145,19 @@ class MapComponent extends React.Component {
         }
       }
     });
-    this.createPath();
+    // this.createPath();
+  }
+
+  private updateMarkers() {
+    this.pathCoords = [];
+    this.markersOnMap.forEach((marker) => {
+      // const roundValue = 5;
+      const lngLat = marker.getLngLat();
+      // const markerCoords: mapboxgl.LngLatLike = [this.roundNumber(lngLat.lng, roundValue), this.roundNumber(lngLat.lat, roundValue)];
+      const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
+      this.pathCoords.push(markerCoords);
+    });
+    // this.createPath();
   }
 
   private createPath() {
@@ -184,19 +203,29 @@ class MapComponent extends React.Component {
     });  
   }
   
+  private onDragEnd() {
+    console.dir('end');
+    this.createPath();
+  }
   // поменть в create and remove marker
   // ставить координаты в stor
-  private onDrag() {
-    this.pathCoords = [];
-    this.markersOnMap.forEach((marker) => {
-      console.dir(marker);
-      // const roundValue = 5;
-      const lngLat = marker.getLngLat();
-      // const markerCoords: mapboxgl.LngLatLike = [this.roundNumber(lngLat.lng, roundValue), this.roundNumber(lngLat.lat, roundValue)];
-      const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
-      this.pathCoords.push(markerCoords);
-    });
-    this.createPath();
+  private onDrag(marker: IMarker) {
+    const markerOnMap = this.markersOnMap.get(marker.id);
+    if (markerOnMap) {
+      const newLngLat = markerOnMap.getLngLat();
+      const newMarker = {...marker, coords: newLngLat}
+      this.updateMarker(newMarker);
+    }
+    // this.pathCoords = [];
+    // this.markersOnMap.forEach((marker) => {
+    //   console.dir(marker);
+    //   // const roundValue = 5;
+    //   const lngLat = marker.getLngLat();
+    //   // const markerCoords: mapboxgl.LngLatLike = [this.roundNumber(lngLat.lng, roundValue), this.roundNumber(lngLat.lat, roundValue)];
+    //   const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
+    //   this.pathCoords.push(markerCoords);
+    // });
+    // this.createPath();
   }
 
   // private roundNumber(value: number, count: number):number {

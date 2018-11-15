@@ -20,13 +20,9 @@ const addMarker = (state, marker) => {
 	return state.markers.entries();
 }
 
-const updateMarker = (markers, newMarker) => {
-	return markers.map((marker) => {
-		if (marker.id === newMarker.id) {
-			marker.coords = newMarker.coords;
-		}
-		return marker;
-	})
+const updateMarker = (markers: Map<number, IMarker>, newMarker: IMarker) => {
+	markers.set(Number(newMarker.id), newMarker);
+	return markers.entries();
 }
 
 const deleteMarker = (markers: Map<number, IMarker>, id: number) => {
@@ -39,7 +35,7 @@ export const rootReducer = (state: IState = initialState, action) => {
     case ACTION_ADD_MARKER:
 			return { ...state, markers: new Map(addMarker(state, action.payload))  }
     case ACTION_UPDATE_MARKER:
-			return { ...state, markers: [  ...updateMarker(state.markers, action.payload)] }
+			return { ...state, markers: new Map(updateMarker(state.markers, action.payload)) }
     case ACTION_DELETE_MARKER:
 			return { ...state, markers: new Map(deleteMarker(state.markers, action.payload)) }
 		case ACTION_ADD_MAP_CENTER: 
