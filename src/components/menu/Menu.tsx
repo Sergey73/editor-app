@@ -1,17 +1,27 @@
 import * as React from 'react';
 import './Menu.scss';
 import IMarker from '@common/interfaces/Marker';
+// import { Draggable } from 'react-beautiful-dnd';
+import IDataForUpdateList from '@common/interfaces/DataForUpdateList';
 
 class Menu extends React.Component {
   markers: Map<string, IMarker>;
   props: any;
-  addMarker: (newDate:any) => {};
-  deleteMarker: (newDate:number) => {};
+  dragged: any;
+  over: any;
+  placeholder = document.createElement('div');
+
+  addMarker: (newDate: IMarker) => {};
+  deleteMarker: (id: string) => {};
+  updateMarkerList: (data: IDataForUpdateList) => {};
   
   constructor(props) {
     super(props);
+    this.placeholder.className = 'placeholder';
+
     this.addMarker = this.props.addMarker;
     this.deleteMarker = this.props.deleteMarker;
+    this.updateMarkerList = this.props.updateMarkerList;
   }
   
   handleEnter: React.KeyboardEventHandler<HTMLInputElement> = e => {
@@ -21,7 +31,7 @@ class Menu extends React.Component {
   }
   
   removeMarker: React.MouseEventHandler<HTMLSpanElement> = (e: any) => {
-    const id: number = Number(e.target.dataset.id);
+    const id: string = e.target.parentElement.dataset.id;
     if (!id) { return; }
     this.deleteMarker(id);
   }
@@ -49,7 +59,9 @@ class Menu extends React.Component {
           />
         </div>
         <div className="menu-component__row">
-          <div className="menu-component__row__list">
+          <div className="menu-component__row__list"
+            onDragOver={ this.dragOver }
+          >
             { this.createListMarkers() }
           </div>
         </div>
@@ -67,17 +79,52 @@ class Menu extends React.Component {
 
   private createListMarkers() {
     const arrMarkers = [...this.markers.values()];
-    return arrMarkers.map((marker, i) => <div key={i}>
-      { marker.title } coords.lat: { marker.coords.lat} coords.lng: { marker.coords.lng}
-      <span className="close-btn" data-id={ marker.id } onClick={ this.removeMarker }>x</span>  
+    return arrMarkers.map((marker, i) => <div key={i} 
+      className="menu-component__row__list__item"
+      draggable={ true }
+      onDragStart={ this.dragStart }
+      onDragEnd={ this.dragEnd }
+      data-id={ marker.id }
+    >
+      { marker.title } coords.lat: { marker.coords.lat } coords.lng: { marker.coords.lng }
+      <span className="close-btn" onClick={ this.removeMarker }>x</span>  
     </div>);
   }
   
+  // private dragStart(e: React.DragEvent<HTMLDivElement>) { 
+  private dragStart: any = e => { 
+    // const id: number = Number(dragStarte.target.dataset.id);
+    // const id = (e.target as HTMLDivElement).id; 
+    this.dragged = e.target;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.dragged);
+  } 
+
+  // handleEnter: React.KeyboardEventHandler<HTMLInputElement> = e => {
+  private dragEnd: any = e => {
+    this.dragged.style.display = 'block';
+    this.dragged.parentNode.removeChild(this.placeholder);
+    
+    const data: IDataForUpdateList = {
+      from: this.dragged.dataset.id,
+      to: this.over.dataset.id,
+    };
+    this.updateMarkerList(data);
+  }
+
+  private dragOver: any = e => {
+    e.preventDefault();
+    this.dragged.style.display = "none";
+    if (e.target.className === 'placeholder') { return; }
+    this.over = e.target;
+    e.target.parentNode.insertBefore(this.placeholder, e.target);
+  }
+
   private createMarker() {
     return {
-      coords: {lat: null, lng: null},
-      id: +new Date(),
-      title: null,
+      coords: { lat: 0, lng: 0 },
+      id: (+new Date()).toString(),
+      title: '',
     }
   }
 

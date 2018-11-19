@@ -150,9 +150,12 @@ class MapComponent extends React.Component {
 
   private updateMarkers() {
     this.pathCoords = [];
-    this.markersOnMap.forEach((marker) => {
+    // this.markersOnMap.forEach((marker) => {
+    this.markers.forEach((marker) => {
       // const roundValue = 5;
-      const lngLat = marker.getLngLat();
+      
+      // const lngLat = marker.getLngLat();
+      const lngLat = marker.coords;
       // const markerCoords: mapboxgl.LngLatLike = [this.roundNumber(lngLat.lng, roundValue), this.roundNumber(lngLat.lat, roundValue)];
       const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
       this.pathCoords.push(markerCoords);

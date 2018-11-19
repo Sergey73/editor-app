@@ -5,11 +5,13 @@ import './App.scss';
 import Map from '../map/Map';
 import Menu from '../menu/Menu';
 import { bindActionCreators } from 'redux';
+
 import { 
   addMarker,
   updateMarker,
   addMapCenter,
   deleteMarker,
+  updateMarkerList,
 } from '@store/actions';
 
 class App extends React.Component {
@@ -40,6 +42,7 @@ const putActionToProps = (dispatch) => {
     addMarker: bindActionCreators(addMarker, dispatch),
     deleteMarker: bindActionCreators(deleteMarker, dispatch),
     updateMarker: bindActionCreators(updateMarker, dispatch),
+    updateMarkerList: bindActionCreators(updateMarkerList, dispatch),
   }
 }
 

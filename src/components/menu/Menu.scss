@@ -1,18 +1,30 @@
 .menu-component {
+  
   &__input {
     grid-area: inputItem;
     input {
       width: 100%;
     }
   }
-
+  
   &__row {
     grid-area: row;
     align-self: start; // выравнивание по оси y
     &__list {
-      
+      &__item {
+        border: 1px solid black;
+      }
     }
   }
+
+  .placeholder {
+    background: rgb(255,240,120);
+    &:before {
+      content: 'Вставить сюда';
+      color: rgb(225,210,90);
+    }
+  }
+
 
   display: grid;
   grid-template-columns: 40px 170px 40px;
