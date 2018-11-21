@@ -34,7 +34,7 @@ const deleteMarker = (markers: Map<string, IMarker>, id: string) => {
 }
 
 const updateMarkerList = (markers: Map<string, IMarker>, data: IDataForUpdateList) => {
-	const fromValue = markers.get(data.from);
+	const fromValue: IMarker = markers.get(data.from)!;
 	const result: any = [];
 	markers.forEach((value, key) => {
 		if (key !== data.from) { 

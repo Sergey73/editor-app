@@ -2,28 +2,17 @@ import * as mapboxgl from 'mapbox-gl';
 import './Map.scss';
 import * as React from 'react';
 import IMarker from '@common/interfaces/Marker';
+import ICoords from '@common/interfaces/Coords';
 
 class MapComponent extends React.Component {
   markers: Map<string, IMarker>; 
   props: any;
-  addMapCenter: (newDate:any) => {};
-  addMarker: (newDate:any) => {};
-  updateMarker: (newDate:any) => {};
+  addMapCenter: (newDate: mapboxgl.LngLat) => {};
+  updateMarker: (newDate: IMarker) => {};
 
   private map: mapboxgl.Map;
   private pathName: string = 'path';
   private pathCoords: any[] = [];
-  // private geoJsonPathData: GeoJSON.Feature<GeoJSON.Geometry> = {
-  //   "type": "Feature",
-  //   "properties": {},
-  //   "geometry": {
-  //     "type": "LineString",
-  //     "coordinates": this.pathCoords,
-  //   }
-  // };
-
-
-  // private pathCoords: mapboxgl.LngLatLike[] | any[] = [];
   private markersOnMap: Map<string, mapboxgl.Marker> = new Map();
   private mapbox = mapboxgl;
   private setMapContainer: React.Ref<HTMLDivElement>;
@@ -31,7 +20,6 @@ class MapComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    this.addMarker = this.props.addMarker;
     this.updateMarker = this.props.updateMarker;
     this.addMapCenter = this.props.addMapCenter;
     this.setMapContainer = (el:HTMLDivElement) => { this.mapContainer = el };
@@ -47,25 +35,14 @@ class MapComponent extends React.Component {
     this.addMapCenterCoords();
   }
   
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    // тут проверять поменялись ли координаты маркера или нет
-    // debugger
-    // let result = true;
-    // nextProps.markers.forEach((marker) => {
-      //   if (marker.coords.lat === null) {
-        //     marker.coords = this.map.getCenter();
-        //     this.updateMarker(marker)
-        //     result = false;
-        //   }
-        // });
-        // return result;
-        return true;
-      }
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   return true;
+  // }
       
   render() {
     this.markers = this.props.markers;
-    const nextMapLength = this.markers.size;
-    const prevMapLength = this.markersOnMap.size;
+    const nextMapLength: number = this.markers.size;
+    const prevMapLength: number = this.markersOnMap.size;
     if ( nextMapLength > prevMapLength ) {
       this.addMarkersOnMap();
     } else if ( nextMapLength < prevMapLength ) {
@@ -96,29 +73,28 @@ class MapComponent extends React.Component {
     }
     
     private addMapCenterCoords() {
-      const centerCoords = this.map.getCenter().wrap();
+      const centerCoords: mapboxgl.LngLat = this.map.getCenter().wrap();
       this.addMapCenter(centerCoords);
     };
     
     private addMarkersOnMap() {
       if (!this.map) { return }
       this.pathCoords = [];
-      this.markers.forEach((marker) => {
+      this.markers.forEach((marker: IMarker) => {
       const markerCoords: mapboxgl.LngLatLike = [marker.coords.lng, marker.coords.lat];
       ;
       if (!this.markersOnMap.has(marker.id) ) {
-        const itemMarker = this.createMarker();
+        const itemMarker: mapboxgl.Marker = this.createMarker();
         itemMarker
         .setLngLat(markerCoords)
         .setPopup(this.criatePopup(marker.title))
         .addTo(this.map)
-        .on('dragend', () => this.onDragEnd())
+        .on('dragend', () => this.createPath())
         .on('drag', () => this.onDrag(marker));
         this.markersOnMap.set(marker.id, itemMarker);
       };
       this.pathCoords.push(markerCoords);
     });
-    // this.createPath();
   }
 
   private criatePopup(title: string): mapboxgl.Popup {
@@ -126,9 +102,7 @@ class MapComponent extends React.Component {
       .setText(title);
   }
 
-  private createMarker(): mapboxgl.Marker {    
-    // const item = document.createElement('div');
-    // item.classList.add('truck');
+  private createMarker(): mapboxgl.Marker {
     return new this.mapbox.Marker({
       draggable: true
     });
@@ -137,9 +111,9 @@ class MapComponent extends React.Component {
   private removeMarkerFromMap() {
     this.pathCoords = [];
     [ ...this.markersOnMap.keys()].forEach(id => {
-      const markerFromStor = this.markers.get(id);
+      const markerFromStor: IMarker = this.markers.get(id)!;
       if (!this.markers.has(id) ) {
-        const markerOnMap = this.markersOnMap.get(id);
+        const markerOnMap: mapboxgl.Marker = this.markersOnMap.get(id)!;
         if (markerOnMap) {
           markerOnMap.remove();
           this.markersOnMap.delete(id);
@@ -151,22 +125,16 @@ class MapComponent extends React.Component {
         }
       }
     });
-    // this.createPath();
   }
 
   private updateMarkers() {
     this.pathCoords = [];
-    // this.markersOnMap.forEach((marker) => {
+
     this.markers.forEach((marker) => {
-      // const roundValue = 5;
-      
-      // const lngLat = marker.getLngLat();
-      const lngLat = marker.coords;
-      // const markerCoords: mapboxgl.LngLatLike = [this.roundNumber(lngLat.lng, roundValue), this.roundNumber(lngLat.lat, roundValue)];
+      const lngLat:ICoords = marker.coords;
       const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
       this.pathCoords.push(markerCoords);
     });
-    // this.createPath();
   }
 
   private createPath() {
@@ -211,39 +179,15 @@ class MapComponent extends React.Component {
       }
     });  
   }
-  
-  private onDragEnd() {
-    console.dir('end');
-    this.createPath();
-  }
-  // поменть в create and remove marker
-  // ставить координаты в stor
+
   private onDrag(marker: IMarker) {
-    const markerOnMap = this.markersOnMap.get(marker.id);
+    const markerOnMap: mapboxgl.Marker = this.markersOnMap.get(marker.id)!;
     if (markerOnMap) {
-      const newLngLat = markerOnMap.getLngLat();
-      const newMarker = {...marker, coords: newLngLat}
+      const newLngLat: mapboxgl.LngLat = markerOnMap.getLngLat();
+      const newMarker: IMarker = {...marker, coords: newLngLat}
       this.updateMarker(newMarker);
     }
-    // this.pathCoords = [];
-    // this.markersOnMap.forEach((marker) => {
-    //   console.dir(marker);
-    //   // const roundValue = 5;
-    //   const lngLat = marker.getLngLat();
-    //   // const markerCoords: mapboxgl.LngLatLike = [this.roundNumber(lngLat.lng, roundValue), this.roundNumber(lngLat.lat, roundValue)];
-    //   const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
-    //   this.pathCoords.push(markerCoords);
-    // });
-    // this.createPath();
   }
-
-  // private roundNumber(value: number, count: number):number {
-  //   const arr = value.toString().split('.');
-  //   if (arr.length === 1) {
-  //     return value;
-  //   }
-  //   return Number([arr[0], arr[1].slice(0, count) ].join('.'));
-  // }
 
 }
 

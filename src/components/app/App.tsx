@@ -32,7 +32,6 @@ class App extends React.Component {
 const putStateToProps = (state) => {
   return {
     markers: state.markers,
-    x: 1,
   }
 };
 
