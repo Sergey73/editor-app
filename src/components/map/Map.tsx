@@ -110,6 +110,7 @@ class MapComponent extends React.Component {
         const itemMarker = this.createMarker();
         itemMarker
         .setLngLat(markerCoords)
+        .setPopup(this.criatePopup(marker.title))
         .addTo(this.map)
         .on('dragend', () => this.onDragEnd())
         .on('drag', () => this.onDrag(marker));
@@ -118,6 +119,11 @@ class MapComponent extends React.Component {
       this.pathCoords.push(markerCoords);
     });
     // this.createPath();
+  }
+
+  private criatePopup(title: string): mapboxgl.Popup {
+    return new this.mapbox.Popup({ offset: 45 })
+      .setText(title);
   }
 
   private createMarker(): mapboxgl.Marker {    

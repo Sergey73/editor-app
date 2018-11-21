@@ -9,7 +9,7 @@ class Menu extends React.Component {
   props: any;
   dragged: any;
   over: any;
-  placeholder = document.createElement('div');
+  placeholder: HTMLDivElement = document.createElement('div');
 
   addMarker: (newDate: IMarker) => {};
   deleteMarker: (id: string) => {};
@@ -101,7 +101,7 @@ class Menu extends React.Component {
   } 
 
   // handleEnter: React.KeyboardEventHandler<HTMLInputElement> = e => {
-  private dragEnd: any = e => {
+  private dragEnd = e => {
     this.dragged.style.display = 'block';
     this.dragged.parentNode.removeChild(this.placeholder);
     
@@ -112,7 +112,7 @@ class Menu extends React.Component {
     this.updateMarkerList(data);
   }
 
-  private dragOver: any = e => {
+  private dragOver = e => {
     e.preventDefault();
     this.dragged.style.display = "none";
     if (e.target.className === 'placeholder') { return; }
