@@ -48,41 +48,38 @@ class MapComponent extends React.Component {
     } else if ( nextMapLength < prevMapLength ) {
       this.removeMarkerFromMap();
     } else if (nextMapLength === prevMapLength) {
-      this.updateMarkers();
+      this.updateMarkersOnMap();
     }
     
     if( nextMapLength || prevMapLength) {
       this.createPath();
     }
 
-    return (
-      <div ref={ this.setMapContainer } className="map" />
-      );
-    }
+    return <div ref={ this.setMapContainer } className="map" />
+  }
     
-    componentWillUnmount() {
-      this.map.remove();
-    }
+  componentWillUnmount() {
+    this.map.remove();
+  }
+  
+  private subscribeToEvents() {
+    this.map.on('moveend', () => { this.addMapCenterCoords(); });
+    this.map.on('load', () => {
+      this.createSource();
+      this.addPathLayer();
+    });
+  }
+  
+  private addMapCenterCoords() {
+    const centerCoords: mapboxgl.LngLat = this.map.getCenter().wrap();
+    this.addMapCenter(centerCoords);
+  };
     
-    private subscribeToEvents() {
-      this.map.on('moveend', () => { this.addMapCenterCoords(); });
-      this.map.on('load', () => {
-        this.createSource();
-        this.addPathLayer();
-      });
-    }
-    
-    private addMapCenterCoords() {
-      const centerCoords: mapboxgl.LngLat = this.map.getCenter().wrap();
-      this.addMapCenter(centerCoords);
-    };
-    
-    private addMarkersOnMap() {
-      if (!this.map) { return }
-      this.pathCoords = [];
-      this.markers.forEach((marker: IMarker) => {
+  private addMarkersOnMap() {
+    if (!this.map) { return }
+    this.pathCoords = [];
+    this.markers.forEach((marker: IMarker) => {
       const markerCoords: mapboxgl.LngLatLike = [marker.coords.lng, marker.coords.lat];
-      ;
       if (!this.markersOnMap.has(marker.id) ) {
         const itemMarker: mapboxgl.Marker = this.createMarker();
         itemMarker
@@ -114,20 +111,16 @@ class MapComponent extends React.Component {
       const markerFromStor: IMarker = this.markers.get(id)!;
       if (!this.markers.has(id) ) {
         const markerOnMap: mapboxgl.Marker = this.markersOnMap.get(id)!;
-        if (markerOnMap) {
-          markerOnMap.remove();
-          this.markersOnMap.delete(id);
-        }
+        markerOnMap.remove();
+        this.markersOnMap.delete(id);
       } else {
-        if (markerFromStor) {
-          const markerCoords: mapboxgl.LngLatLike = [markerFromStor.coords.lng, markerFromStor.coords.lat];
-          this.pathCoords.push(markerCoords);
-        }
+        const markerCoords: mapboxgl.LngLatLike = [markerFromStor.coords.lng, markerFromStor.coords.lat];
+        this.pathCoords.push(markerCoords);
       }
     });
   }
 
-  private updateMarkers() {
+  private updateMarkersOnMap() {
     this.pathCoords = [];
 
     this.markers.forEach((marker) => {
