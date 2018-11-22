@@ -9,19 +9,30 @@
   
   &__row {
     grid-area: row;
-    align-self: start; // выравнивание по оси y
+    align-self: start;
     &__list {
       &__item {
-        border: 1px solid black;
+        display: flex;
+        position: relative;
+        justify-content: space-between;
+        &__text {
+          overflow: hidden;
+          padding: 2px;
+          text-overflow: ellipsis;
+        }
+        &:hover {
+          cursor: pointer;
+          border: 1px dashed black;
+        }
       }
     }
   }
 
   .placeholder {
-    background: rgb(255,240,120);
+    background: #f6f6f6;
     &:before {
       content: 'Вставить сюда';
-      color: rgb(225,210,90);
+      opacity: 0.3;
     }
   }
 
@@ -36,6 +47,10 @@
   align-items: center;
 
   .close-btn {
-    cursor: pointer;
+    opacity: 0.3;
+    padding-right: 5px;
+  }
+  .close-btn:hover {
+    opacity: 1;
   }
 }

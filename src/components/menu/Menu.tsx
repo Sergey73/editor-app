@@ -8,7 +8,7 @@ class Menu extends React.Component {
   props: any;
   dragged: HTMLDivElement;
   over: HTMLDivElement;
-  placeholder: HTMLDivElement = document.createElement('div');
+  placeholder: HTMLDivElement;
 
   addMarker: (newDate: IMarker) => {};
   deleteMarker: (id: string) => {};
@@ -16,7 +16,7 @@ class Menu extends React.Component {
   
   constructor(props) {
     super(props);
-    this.placeholder.className = 'placeholder';
+    this.createPlaceholder();
 
     this.addMarker = this.props.addMarker;
     this.deleteMarker = this.props.deleteMarker;
@@ -24,7 +24,7 @@ class Menu extends React.Component {
   }
   
   handleEnter: React.KeyboardEventHandler<HTMLInputElement> = e => {
-    if (e.which === 13) {
+    if (e.which === 13 ) {
       this.addMarkerToState(e);
     }
   }
@@ -64,8 +64,17 @@ class Menu extends React.Component {
     );
   }
 
+  private createPlaceholder() {
+    this.placeholder = document.createElement('div');
+    this.placeholder.className = 'placeholder';
+  }
+
   private addMarkerToState(e) {
     const value: string = e.target.value;
+    if (!value.trim()) { 
+      e.target.value = '';
+      return;
+    }
     const newMarker: IMarker = this.createMarker();
     newMarker.title = value;
     this.addMarker(newMarker);
@@ -81,34 +90,44 @@ class Menu extends React.Component {
       onDragEnd={ this.dragEnd }
       data-id={ marker.id }
     >
-      { marker.title }
+      <div className="menu-component__row__list__item__text">{ marker.title }</div>
       <span className="close-btn" onClick={ this.removeMarker }>x</span>  
     </div>);
   }
   
   private dragStart = e => { 
     this.dragged = e.target;
+    console.dir(this.dragged);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.dragged);
   } 
 
   private dragEnd = e => {
-    this.dragged.style.display = 'block';
-    this.dragged.parentNode!.removeChild(this.placeholder);
-      
-    const data: IDataForUpdateList = {
-      from: this.dragged.dataset.id!,
-      to: this.over.dataset.id!,
-    };
-    this.updateMarkerList(data);
+    this.dragged.style.display = 'flex';
+    if(this.dragged.parentNode &&
+      this.dragged.parentNode === this.placeholder.parentNode
+    ) {
+      this.dragged.parentNode.removeChild(this.placeholder);
+        
+      if (this.dragged.dataset.id === this.over.dataset.id) { return; }
+      const data: IDataForUpdateList = {
+        from: this.dragged.dataset.id!,
+        to: this.over.dataset.id!,
+      };
+      this.updateMarkerList(data);
+    }
   }
 
   private dragOver = e => {
     e.preventDefault();
     this.dragged.style.display = "none";
-    if (e.target.className === 'placeholder') { return; }
-    this.over = e.target;
-    e.target.parentNode.insertBefore(this.placeholder, e.target);
+    if (e.target.className === 'menu-component__row__list__item') { 
+      this.over = e.target;
+      this.over.parentNode!.insertBefore(this.placeholder, this.over);
+    } else if(e.target.className === 'menu-component__row__list__item__text') {
+      this.over = e.target.parentNode;
+      this.over.parentNode!.insertBefore(this.placeholder, this.over);
+    }   
   }
 
   private createMarker(): IMarker {
