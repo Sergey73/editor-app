@@ -12,7 +12,7 @@ class MapComponent extends React.Component {
 
   private map: mapboxgl.Map;
   private pathName: string = 'path';
-  private pathCoords: any[] = [];
+  private pathCoords: mapboxgl.LngLatLike[] = [];
   private markersOnMap: Map<string, mapboxgl.Marker> = new Map();
   private mapbox = mapboxgl;
   private setMapContainer: React.Ref<HTMLDivElement>;
@@ -34,10 +34,6 @@ class MapComponent extends React.Component {
     this.subscribeToEvents();
     this.addMapCenterCoords();
   }
-  
-  // shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   return true;
-  // }
       
   render() {
     this.markers = this.props.markers;
@@ -95,7 +91,7 @@ class MapComponent extends React.Component {
   }
 
   private criatePopup(title: string): mapboxgl.Popup {
-    return new this.mapbox.Popup({ offset: 45 })
+    return new this.mapbox.Popup()
       .setText(title);
   }
 
@@ -122,12 +118,17 @@ class MapComponent extends React.Component {
 
   private updateMarkersOnMap() {
     this.pathCoords = [];
+    const tempMarkersOnMap: Map<string, mapboxgl.Marker> = new Map();
 
     this.markers.forEach((marker) => {
       const lngLat:ICoords = marker.coords;
       const markerCoords: mapboxgl.LngLatLike = [lngLat.lng,lngLat.lat];
       this.pathCoords.push(markerCoords);
+
+      const markerFromOldObj:mapboxgl.Marker = this.markersOnMap.get(marker.id)!;
+      tempMarkersOnMap.set(marker.id, markerFromOldObj)
     });
+    this.markersOnMap = tempMarkersOnMap;
   }
 
   private createPath() {
@@ -137,7 +138,7 @@ class MapComponent extends React.Component {
       "properties": {},
       "geometry": {
         "type": "LineString",
-        "coordinates": this.pathCoords,
+        "coordinates": this.pathCoords as number[][],
       }
     };
     source.setData(geoJsonPathData);
@@ -151,7 +152,7 @@ class MapComponent extends React.Component {
         "properties": {},
         "geometry": {
           "type": "LineString",
-          "coordinates": this.pathCoords,
+          "coordinates": this.pathCoords as number[][],
         }
       }
     });

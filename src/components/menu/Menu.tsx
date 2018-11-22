@@ -35,13 +35,6 @@ class Menu extends React.Component {
     this.deleteMarker(id);
   }
 
-  // проверка на обновление
-  // shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   return 
-  // }
-
-  // componentDidMount() {}
-  
   render() {
     this.markers = this.props.markers;
 
@@ -97,7 +90,6 @@ class Menu extends React.Component {
   
   private dragStart = e => { 
     this.dragged = e.target;
-    console.dir(this.dragged);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.dragged);
   } 
