@@ -4,7 +4,7 @@ import IMarker from '@common/interfaces/Marker';
 import IDataForUpdateList from '@common/interfaces/DataForUpdateList';
 
 class Menu extends React.Component {
-  markers: Map<string, IMarker>;
+  markers: Map<string, IMarker> = new Map();
   props: any;
   dragged: HTMLDivElement;
   over: HTMLDivElement;
@@ -46,8 +46,8 @@ class Menu extends React.Component {
             onKeyPress={ this.handleEnter }
           />
         </div>
-        <div className="menu-component__row">
-          <div className="menu-component__row__list"
+        <div className="menu-component__container">
+          <div className="menu-component__container__list"
             onDragOver={ this.dragOver }
           >
             { this.createListMarkers() }
@@ -75,15 +75,18 @@ class Menu extends React.Component {
   }
 
   private createListMarkers() {
+    if (!this.markers) {
+      return null;
+    }
     const arrMarkers: IMarker[] = [...this.markers.values()];
     return arrMarkers.map((marker, i) => <div key={i} 
-      className="menu-component__row__list__item"
+      className="menu-component__container__list__item"
       draggable={ true }
       onDragStart={ this.dragStart }
       onDragEnd={ this.dragEnd }
       data-id={ marker.id }
     >
-      <div className="menu-component__row__list__item__text">{ marker.title }</div>
+      <div className="menu-component__container__list__item__text">{ marker.title }</div>
       <span className="close-btn" onClick={ this.removeMarker }>x</span>  
     </div>);
   }
@@ -113,10 +116,10 @@ class Menu extends React.Component {
   private dragOver = e => {
     e.preventDefault();
     this.dragged.style.display = "none";
-    if (e.target.className === 'menu-component__row__list__item') { 
+    if (e.target.className === 'menu-component__container__list__item') { 
       this.over = e.target;
       this.over.parentNode!.insertBefore(this.placeholder, this.over);
-    } else if(e.target.className === 'menu-component__row__list__item__text') {
+    } else if(e.target.className === 'menu-component__container__list__item__text') {
       this.over = e.target.parentNode;
       this.over.parentNode!.insertBefore(this.placeholder, this.over);
     }   
