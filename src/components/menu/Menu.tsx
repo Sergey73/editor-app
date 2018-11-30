@@ -5,7 +5,7 @@ import IDataForUpdateList from '@common/interfaces/DataForUpdateList';
 
 class Menu extends React.Component {
   markers: Map<string, IMarker> = new Map();
-  props: any;
+  props: any; // описать тип
   dragged: HTMLDivElement;
   over: HTMLDivElement;
   placeholder: HTMLDivElement;
@@ -91,10 +91,11 @@ class Menu extends React.Component {
     </div>);
   }
   
-  private dragStart = e => { 
-    this.dragged = e.target;
+  private dragStart = (e: React.DragEvent<HTMLDivElement>) => { 
+    this.dragged = e.target as HTMLDivElement;
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', this.dragged);
+    const data: string = this.dragged.textContent as string;
+    e.dataTransfer.setData('text/html', data);
   } 
 
   private dragEnd = e => {

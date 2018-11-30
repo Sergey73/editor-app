@@ -19,6 +19,7 @@ class MapComponent extends React.Component {
   private mapContainer: HTMLDivElement;
 
   constructor(props) {
+    // добавить интерфейс для пропсов
     super(props);
     this.updateMarker = this.props.updateMarker;
     this.addMapCenter = this.props.addMapCenter;
@@ -26,9 +27,11 @@ class MapComponent extends React.Component {
   }
   
   componentDidMount() {
+    // вынести в константы
     this.mapbox.accessToken = 'pk.eyJ1Ijoic2VyZ2V5NzMiLCJhIjoiY2lyM3JhNXR1MDAydGh6bWM3ZzBjaGlrYyJ9.MxdICo0uhxAtmyWpA_CeVw';
     this.map = new this.mapbox.Map({
       container: this.mapContainer,
+    // вынести в константы
       style: 'mapbox://styles/mapbox/streets-v9',
     });
     this.subscribeToEvents();
@@ -39,6 +42,7 @@ class MapComponent extends React.Component {
     this.markers = this.props.markers;
     const nextMapLength: number = this.markers.size;
     const prevMapLength: number = this.markersOnMap.size;
+    
     if ( nextMapLength > prevMapLength ) {
       this.addMarkersOnMap();
     } else if ( nextMapLength < prevMapLength ) {
