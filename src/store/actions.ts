@@ -1,44 +1,51 @@
 import ICoords from '@common/interfaces/Coords';
 import IMarker from '@common/interfaces/Marker';
 import IDataForUpdateList from '@common/interfaces/DataForUpdateList';
+
+import {
+	IActionAddMarker,
+	IActionDeleteMarker,
+	IActionUpdateMarker,
+	IActionAddMapCenter,
+	IActionUpdateMarkerList,
+} from '@common/interfaces/Actions';
 import { 
 	ACTION_ADD_MARKER,
+	ACTION_DELETE_MARKER,
 	ACTION_UPDATE_MARKER,
 	ACTION_ADD_MAP_CENTER,
-	ACTION_DELETE_MARKER,
 	ACTION_UPDATE_MARKER_LIST,
 } from "@store/action-types";
-import IAction from '@common/interfaces/Action';
 
-export const addMarker = (marker: IMarker): IAction => {
+export const addMarker = (marker: IMarker): IActionAddMarker => {
 	return {
 		payload: marker,
     type: ACTION_ADD_MARKER,
   }
 }
 
-export const updateMarker = (marker: IMarker):IAction => {
+export const deleteMarker = (id: string): IActionDeleteMarker => {
+	return {
+		payload: id,
+		type: ACTION_DELETE_MARKER,
+	}
+}
+
+export const updateMarker = (marker: IMarker):IActionUpdateMarker => {
 	return {
 		payload: marker,
     type: ACTION_UPDATE_MARKER,
   }
 }
 
-export const deleteMarker = (id: string): IAction => {
-	return {
-		payload: id,
-    type: ACTION_DELETE_MARKER,
-  }
-}
-
-export const addMapCenter = (coords: ICoords): IAction => {
+export const addMapCenter = (coords: ICoords): IActionAddMapCenter => {
 	return {
 		payload: coords,
 		type: ACTION_ADD_MAP_CENTER,
 	}
 }
 
-export const updateMarkerList = (data: IDataForUpdateList): IAction => {
+export const updateMarkerList = (data: IDataForUpdateList): IActionUpdateMarkerList => {
 	return {
 		payload: data,
     type: ACTION_UPDATE_MARKER_LIST

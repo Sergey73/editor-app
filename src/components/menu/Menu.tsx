@@ -2,10 +2,12 @@ import * as React from 'react';
 import './Menu.scss';
 import IMarker from '@common/interfaces/Marker';
 import IDataForUpdateList from '@common/interfaces/DataForUpdateList';
+import { IProps } from '@common/interfaces/Props';
+import IState from '@common/interfaces/State';
 
-class Menu extends React.Component {
+class Menu extends React.Component<IProps, IState> {
   markers: Map<string, IMarker> = new Map();
-  props: any; // описать тип
+  props: IProps
   dragged: HTMLDivElement;
   over: HTMLDivElement;
   placeholder: HTMLDivElement;
@@ -14,10 +16,9 @@ class Menu extends React.Component {
   deleteMarker: (id: string) => {};
   updateMarkerList: (data: IDataForUpdateList) => {};
   
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
     this.createPlaceholder();
-
     this.addMarker = this.props.addMarker;
     this.deleteMarker = this.props.deleteMarker;
     this.updateMarkerList = this.props.updateMarkerList;
@@ -29,8 +30,9 @@ class Menu extends React.Component {
     }
   }
   
-  removeMarker: React.MouseEventHandler<HTMLSpanElement> = (e: any) => {
-    const id: string = e.target.parentElement.dataset.id;
+  removeMarker: React.MouseEventHandler<HTMLSpanElement> = e => {
+    const elem = e.target as HTMLSpanElement;
+    const id: string = elem.parentElement!.dataset.id!;
     if (!id) { return; }
     this.deleteMarker(id);
   }

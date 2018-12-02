@@ -3,10 +3,12 @@ import './Map.scss';
 import * as React from 'react';
 import IMarker from '@common/interfaces/Marker';
 import ICoords from '@common/interfaces/Coords';
+import { IProps } from '@common/interfaces/Props';
+import IState from '../../common/interfaces/State';
 
-class MapComponent extends React.Component {
+class MapComponent extends React.Component<IProps, IState> {
   markers: Map<string, IMarker>; 
-  props: any;
+  props: IProps;
   addMapCenter: (newDate: mapboxgl.LngLat) => {};
   updateMarker: (newDate: IMarker) => {};
 
@@ -18,7 +20,7 @@ class MapComponent extends React.Component {
   private setMapContainer: React.Ref<HTMLDivElement>;
   private mapContainer: HTMLDivElement;
 
-  constructor(props) {
+  constructor(props: IProps) {
     // добавить интерфейс для пропсов
     super(props);
     this.updateMarker = this.props.updateMarker;

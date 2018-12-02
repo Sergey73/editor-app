@@ -7,9 +7,9 @@ import {
 	ACTION_ADD_MAP_CENTER,
 	ACTION_UPDATE_MARKER_LIST,
 } from "@store/action-types";
+import { Action } from '@common/interfaces/Actions';
 import IMarker from "@common/interfaces/Marker";
 import IDataForUpdateList from "@common/interfaces/DataForUpdateList";
-import IAction from "@common/interfaces/Action";
 
 const initialState: IState = {
 	map: {
@@ -18,36 +18,41 @@ const initialState: IState = {
 	markers: new Map(),
 }
 
-const addMarker = (state: IState, marker: IMarker) => {
+const addMarker = (state: IState, marker: IMarker): Iterable<[string, IMarker]> => {
 	state.markers.set( marker.id, { ...marker, coords: state.map.center })
 	return state.markers.entries();
 }
 
-const updateMarker = (markers: Map<string, IMarker>, newMarker: IMarker) => {
+const updateMarker = (markers: Map<string, IMarker>, newMarker: IMarker): Iterable<[string, IMarker]> => {
 	markers.set(newMarker.id, newMarker);
 	return markers.entries();
 }
 
-const deleteMarker = (markers: Map<string, IMarker>, id: string) => {
+const deleteMarker = (markers: Map<string, IMarker>, id: string): Iterable<[string, IMarker]> => {
 	markers.delete(id);
 	return markers.entries();
 }
 
-const updateMarkerList = (markers: Map<string, IMarker>, data: IDataForUpdateList) => {
-	const fromValue: IMarker = markers.get(data.from)!;
-	const result: any = [];
+const updateMarkerList = (markers: Map<string, IMarker>, data: IDataForUpdateList): Iterable<[string, IMarker]> => {
+	const fromValue: IMarker = markers.get(data.from) as IMarker;
+	if (fromValue === undefined) {
+		return markers;
+	}
+	
+	const result: [string, IMarker][] = [];
 	markers.forEach((value, key) => {
 		if (key !== data.from) { 
 			if (key === data.to) {
-				result.push([data.from, fromValue]);
+				result.push([data.from , fromValue]);
 			}
 			result.push([key, value])
 		}
 	});
+
 	return result;
 }
 
-export const rootReducer = (state: IState = initialState, action: IAction) => {
+export const rootReducer = (state: IState = initialState, action: Action): IState => {
   switch (action.type) {
     case ACTION_ADD_MARKER:
 			return { ...state, markers: new Map(addMarker(state, action.payload))  }

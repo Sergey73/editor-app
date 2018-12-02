@@ -19,6 +19,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "paths": {
       "@common/*": ["src/common/*"],
+      "@components/*": ["src/components/*"],
       "@store/*": ["src/store/*"]
     },
     "downlevelIteration": true

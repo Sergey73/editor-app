@@ -2,9 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import './App.scss';
 
-import Map from '../map/Map';
-import Menu from '../menu/Menu';
-import { bindActionCreators } from 'redux';
+import Map from '@components/map/Map';
+import Menu from '@components/menu/Menu';
+import { bindActionCreators, Dispatch, Action } from 'redux';
 
 import { 
   addMarker,
@@ -13,8 +13,16 @@ import {
   deleteMarker,
   updateMarkerList,
 } from '@store/actions';
+import IState from '@common/interfaces/State';
+import { IProps } from '@common/interfaces/Props';
 
 class App extends React.Component {
+  props: IProps;
+  
+  constructor(props: IProps) {
+    super(props);
+  }
+
   render() {
     return (
       <div className="editor">
@@ -29,13 +37,13 @@ class App extends React.Component {
   }
 }
 
-const putStateToProps = (state) => {
+const putStateToProps = (state: IState) => {
   return {
     markers: state.markers,
   }
 };
 
-const putActionToProps = (dispatch) => {
+const putActionToProps = (dispatch: Dispatch<Action>) => {
   return {
     addMapCenter: bindActionCreators(addMapCenter, dispatch),
     addMarker: bindActionCreators(addMarker, dispatch),
