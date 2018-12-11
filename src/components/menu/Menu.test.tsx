@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import Menu from './Menu';
 import { IProps } from '@common/interfaces/Props';
 // import IMarker from '@common/interfaces/Marker';
@@ -14,28 +14,40 @@ const props: IProps = {
 }
 
 describe('<Menu />', () => {
-  it("renders input", () => {
-    const menu = shallow(<Menu { ...props } />);
+   it("renders input", () => {
+     const menu = shallow(<Menu { ...props } />);
 
-    const input = menu.find('input');
-    expect(input.length).toEqual(1);
-  });
+     const input = menu.find('input');
+     console.log(input);
+     expect(input.length).toEqual(1);
+   });
   
-  it("set input value by Enter key", () => {
-    const menu = shallow(<Menu {...props } />);
+  //it("set input value by Enter key", () => {
+  //  const wrapper = shallow(<Menu {...props } />);
 
-    const input = menu.find('input');
-    input.simulate('change', {target: {value: 'New marker1'}});
-    input.simulate('keypress', {key: 'Enter'});
-    const div = menu.find('.menu-component__container__list__item__text');
+//    var a = wrapper.find('input');
+
+      // a
+      // .simulate("change", { target: { value: 'new makr 1' }})
+      // .simulate('keyPress', { charCode: 13 })
+      // .simulate('click');
+
+      // console.dir(a.get(0).props);
+    // menu.update();
+    // input.simulate('keypress', {key: '13'});
+    // menu.update();
+      // console.log(input.get(0));
+      // const div = menu.find('div');
+      // console.log(div);
+   
     // input.simulate('Enter', {
     //   which: 13
     // })
-    console.log(div);
-    const ig = input.get(0) as React.ReactElement<HTMLInputElement>;
-    // expect(ig.value).toBe('New marker1');
+    // const ig = wrapper.find('.my-input');
+    // console.log(ig.value);
+    // expect(ig).toBe('New marker1');
 
-  });
+  // });
 });
 
 // найти инпут

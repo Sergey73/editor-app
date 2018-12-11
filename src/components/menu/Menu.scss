@@ -10,31 +10,31 @@
   &__container {
     grid-area: row;
     align-self: start;
-    &__list {
-      &__item {
-        display: flex;
-        position: relative;
-        justify-content: space-between;
-        &__text {
-          overflow: hidden;
-          padding: 2px;
-          text-overflow: ellipsis;
-        }
-        &:hover {
-          cursor: pointer;
-          border: 1px dashed black;
-        }
-      }
-    }
+    // &__list {
+    //   &__item {
+    //     display: flex;
+    //     position: relative;
+    //     justify-content: space-between;
+    //     &__text {
+    //       overflow: hidden;
+    //       padding: 2px;
+    //       text-overflow: ellipsis;
+    //     }
+    //     &:hover {
+    //       cursor: pointer;
+    //       border: 1px dashed black;
+    //     }
+    //   }
+    // }
   }
 
-  .placeholder {
-    background: #f6f6f6;
-    &:before {
-      content: 'Вставить сюда';
-      opacity: 0.3;
-    }
-  }
+  // .placeholder {
+  //   background: #f6f6f6;
+  //   &:before {
+  //     content: 'Вставить сюда';
+  //     opacity: 0.3;
+  //   }
+  // }
 
 
   display: grid;
@@ -46,11 +46,11 @@
   grid-row-gap: 0px;
   align-items: center;
 
-  .close-btn {
-    opacity: 0.3;
-    padding-right: 5px;
-  }
-  .close-btn:hover {
-    opacity: 1;
-  }
+  // .close-btn {
+  //   opacity: 0.3;
+  //   padding-right: 5px;
+  // }
+  // .close-btn:hover {
+  //   opacity: 1;
+  // }
 }

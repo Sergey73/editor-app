@@ -1,27 +1,17 @@
 import * as React from 'react';
 import './Menu.scss';
 import IMarker from '@common/interfaces/Marker';
-import IDataForUpdateList from '@common/interfaces/DataForUpdateList';
 import { IProps } from '@common/interfaces/Props';
 import IState from '@common/interfaces/State';
+import MarkerList from '@components/marker-list/Marker-list';
 
 class Menu extends React.Component<IProps, IState> {
-  markers: Map<string, IMarker> = new Map();
-  props: IProps
-  dragged: HTMLDivElement;
-  over: HTMLDivElement;
-  placeholder: HTMLDivElement;
-
+  props: IProps;  
   addMarker: (newDate: IMarker) => {};
-  deleteMarker: (id: string) => {};
-  updateMarkerList: (data: IDataForUpdateList) => {};
   
   constructor(props: IProps) {
     super(props);
-    this.createPlaceholder();
     this.addMarker = this.props.addMarker;
-    this.deleteMarker = this.props.deleteMarker;
-    this.updateMarkerList = this.props.updateMarkerList;
   }
   
   handleEnter: React.KeyboardEventHandler<HTMLInputElement> = e => {
@@ -29,17 +19,8 @@ class Menu extends React.Component<IProps, IState> {
       this.addMarkerToState(e);
     }
   }
-  
-  removeMarker: React.MouseEventHandler<HTMLSpanElement> = e => {
-    const elem = e.target as HTMLSpanElement;
-    const id: string = elem.parentElement!.dataset.id!;
-    if (!id) { return; }
-    this.deleteMarker(id);
-  }
 
   render() {
-    this.markers = this.props.markers;
-
     return (
       <div className="menu-component">
         <div className="menu-component__input">
@@ -49,19 +30,10 @@ class Menu extends React.Component<IProps, IState> {
           />
         </div>
         <div className="menu-component__container">
-          <div className="menu-component__container__list"
-            onDragOver={ this.dragOver }
-          >
-            { this.createListMarkers() }
-          </div>
+          <MarkerList { ...this.props } />
         </div>
       </div>
     );
-  }
-
-  private createPlaceholder() {
-    this.placeholder = document.createElement('div');
-    this.placeholder.className = 'placeholder';
   }
 
   private addMarkerToState(e) {
@@ -74,58 +46,6 @@ class Menu extends React.Component<IProps, IState> {
     newMarker.title = value;
     this.addMarker(newMarker);
     e.target.value = '';
-  }
-
-  private createListMarkers() {
-    if (!this.markers) {
-      return null;
-    }
-    const arrMarkers: IMarker[] = [...this.markers.values()];
-    return arrMarkers.map((marker, i) => <div key={i} 
-      className="menu-component__container__list__item"
-      draggable={ true }
-      onDragStart={ this.dragStart }
-      onDragEnd={ this.dragEnd }
-      data-id={ marker.id }
-    >
-      <div className="menu-component__container__list__item__text">{ marker.title }</div>
-      <span className="close-btn" onClick={ this.removeMarker }>x</span>  
-    </div>);
-  }
-  
-  private dragStart = (e: React.DragEvent<HTMLDivElement>) => { 
-    this.dragged = e.target as HTMLDivElement;
-    e.dataTransfer.effectAllowed = 'move';
-    const data: string = this.dragged.textContent as string;
-    e.dataTransfer.setData('text/html', data);
-  } 
-
-  private dragEnd = e => {
-    this.dragged.style.display = 'flex';
-    if(this.dragged.parentNode &&
-      this.dragged.parentNode === this.placeholder.parentNode
-    ) {
-      this.dragged.parentNode.removeChild(this.placeholder);
-        
-      if (this.dragged.dataset.id === this.over.dataset.id) { return; }
-      const data: IDataForUpdateList = {
-        from: this.dragged.dataset.id!,
-        to: this.over.dataset.id!,
-      };
-      this.updateMarkerList(data);
-    }
-  }
-
-  private dragOver = e => {
-    e.preventDefault();
-    this.dragged.style.display = "none";
-    if (e.target.className === 'menu-component__container__list__item') { 
-      this.over = e.target;
-      this.over.parentNode!.insertBefore(this.placeholder, this.over);
-    } else if(e.target.className === 'menu-component__container__list__item__text') {
-      this.over = e.target.parentNode;
-      this.over.parentNode!.insertBefore(this.placeholder, this.over);
-    }   
   }
 
   private createMarker(): IMarker {

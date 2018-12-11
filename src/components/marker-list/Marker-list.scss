@@ -1,0 +1,33 @@
+.marker-list {
+
+  &__item {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    &__text {
+      overflow: hidden;
+      padding: 2px;
+      text-overflow: ellipsis;
+    }
+    &:hover {
+      cursor: pointer;
+      border: 1px dashed black;
+    }
+  }
+
+  .placeholder {
+    background: #f6f6f6;
+    &:before {
+      content: 'Вставить сюда';
+      opacity: 0.3;
+    }
+  }
+
+  .close-btn {
+    opacity: 0.3;
+    padding-right: 5px;
+  }
+  .close-btn:hover {
+    opacity: 1;
+  }
+}
