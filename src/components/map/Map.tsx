@@ -21,7 +21,6 @@ class MapComponent extends React.Component<IProps, IState> {
   private mapContainer: HTMLDivElement;
 
   constructor(props: IProps) {
-    // добавить интерфейс для пропсов
     super(props);
     this.updateMarker = this.props.updateMarker;
     this.addMapCenter = this.props.addMapCenter;
@@ -29,12 +28,15 @@ class MapComponent extends React.Component<IProps, IState> {
   }
   
   componentDidMount() {
-    // вынести в константы
     this.mapbox.accessToken = 'pk.eyJ1Ijoic2VyZ2V5NzMiLCJhIjoiY2lyM3JhNXR1MDAydGh6bWM3ZzBjaGlrYyJ9.MxdICo0uhxAtmyWpA_CeVw';
     this.map = new this.mapbox.Map({
       container: this.mapContainer,
-    // вынести в константы
       style: 'mapbox://styles/mapbox/streets-v9',
+      center: { lng :48.396367282978304, lat: 54.308211687913854 },
+      zoom: 16,
+      maxZoom: 20,
+      minZoom: 1,
+      pitch: 50,
     });
     this.subscribeToEvents();
     this.addMapCenterCoords();
